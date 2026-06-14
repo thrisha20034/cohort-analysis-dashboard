@@ -1,0 +1,530 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.dash{padding:1rem 0;font-family:var(--font-sans)}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.badge{background:#0F6E56;color:#9FE1CB;font-size:10px;padding:3px 8px;border-radius:4px;font-weight:500}
+.page-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.page-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.filters label{font-size:11px;color:var(--color-text-secondary)}
+select{font-size:11px;padding:4px 8px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);cursor:pointer}
+.btn{font-size:11px;padding:4px 10px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--color-background-tertiary)}
+.btn.active{background:#00C9A7;color:#04342C;border-color:#00C9A7}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:1rem}
+.kpi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.8rem;cursor:pointer;border:1.5px solid transparent;transition:border-color .2s}
+.kpi:hover{border-color:var(--color-border-secondary)}
+.kpi.selected{border-color:#00C9A7}
+.kpi-label{font-size:10px;color:var(--color-text-secondary);margin-bottom:3px}
+.kpi-val{font-size:20px;font-weight:500;color:var(--color-text-primary);transition:all .3s}
+.kpi-delta{font-size:10px;margin-top:2px;color:#1D9E75}
+.tabs{display:flex;gap:0;margin-bottom:1rem;border-bottom:1.5px solid var(--color-border-tertiary)}
+.tab{font-size:12px;padding:6px 14px;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all .15s}
+.tab:hover{color:var(--color-text-primary)}
+.tab.active{color:#00C9A7;border-bottom-color:#00C9A7;font-weight:500}
+.panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;margin-bottom:10px}
+.sec-title{font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.4px;text-transform:uppercase;margin-bottom:.7rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.cohort-table{width:100%;border-collapse:collapse;font-size:10px}
+.cohort-table th{color:var(--color-text-secondary);font-weight:500;text-align:center;padding:3px 2px;font-size:10px;cursor:pointer}
+.cohort-table th:hover{color:var(--color-text-primary)}
+.cohort-table td{text-align:center;padding:3px 2px;border-radius:3px;font-weight:500;font-size:10px;transition:opacity .3s}
+.ct-label{text-align:left!important;color:var(--color-text-secondary);padding-right:6px!important;white-space:nowrap;cursor:pointer}
+.ct-label:hover{color:#00C9A7}
+.cohort-row{cursor:pointer;transition:filter .2s}
+.cohort-row:hover td{filter:brightness(1.15)}
+.cohort-row.selected td.ct-label{color:#00C9A7;font-weight:700}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.bar-name{font-size:10px;color:var(--color-text-secondary);width:70px;flex-shrink:0;text-align:right}
+.bar-track{flex:1;background:var(--color-background-secondary);border-radius:2px;height:16px;overflow:hidden;cursor:pointer}
+.bar-fill{height:100%;border-radius:2px;display:flex;align-items:center;padding-left:5px;font-size:9px;font-weight:500;transition:width .6s ease,opacity .3s}
+.seg-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.6rem;border-left:3px solid transparent;cursor:pointer;transition:all .2s;border:0.5px solid transparent}
+.seg-card:hover{border-color:var(--color-border-secondary)}
+.seg-card.active-seg{border-left:3px solid #00C9A7;background:var(--color-background-tertiary)}
+.seg-name{font-size:11px;font-weight:500;color:var(--color-text-primary)}
+.seg-val{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.seg-sub{font-size:10px;color:var(--color-text-secondary);margin-top:2px}
+.detail-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem;margin-top:.75rem;border:0.5px solid var(--color-border-secondary)}
+.detail-title{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
+.detail-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.detail-row:last-child{border:none}
+.detail-key{color:var(--color-text-secondary)}
+.detail-val{font-weight:500;color:var(--color-text-primary)}
+.insight-list{list-style:none;padding:0}
+.insight-list li{font-size:11px;color:var(--color-text-secondary);padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;gap:6px}
+.insight-list li:last-child{border:none}
+.insight-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.toggle-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.75rem}
+.toggle-btn{font-size:10px;padding:3px 9px;border-radius:10px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:var(--color-background-secondary);color:var(--color-text-secondary);transition:all .15s}
+.toggle-btn.on{background:#00C9A7;color:#04342C;border-color:#00C9A7}
+.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:.5rem}
+.slider-row label{font-size:11px;color:var(--color-text-secondary);width:120px;flex-shrink:0}
+.slider-row input[type=range]{flex:1}
+.slider-row span{font-size:11px;font-weight:500;color:var(--color-text-primary);width:40px;text-align:right}
+</style>
+
+<div class="dash">
+<h2 class="sr-only">Interactive Revenue Growth Cohort Analysis Dashboard with filterable cohort matrix, revenue charts, and customer segment drill-down</h2>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:8px">
+    <span class="badge">❄ Snowflake</span>
+    <div>
+      <div class="page-title">Revenue Growth Cohort Analysis</div>
+      <div class="page-sub">SQL · PySpark · Pandas · Power BI — Jan 2024 to Dec 2024</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:6px;align-items:center">
+    <select id="yearFilter" onchange="applyFilters()">
+      <option value="all">All periods</option>
+      <option value="q1">Q1 2024</option>
+      <option value="q2">Q2 2024</option>
+      <option value="q3">Q3 2024</option>
+      <option value="q4">Q4 2024</option>
+    </select>
+    <select id="segFilter" onchange="applyFilters()">
+      <option value="all">All segments</option>
+      <option value="champions">Champions</option>
+      <option value="loyal">Loyal</option>
+      <option value="at-risk">At Risk</option>
+      <option value="churned">Churned</option>
+    </select>
+    <button class="btn" onclick="resetAll()">↺ Reset</button>
+  </div>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi" onclick="highlightKpi(this,'customers')" title="Click to highlight">
+    <div class="kpi-label">Total Customers</div>
+    <div class="kpi-val" id="kCustomers">24,830</div>
+    <div class="kpi-delta" id="dCustomers">↑ +12.4% YoY</div>
+  </div>
+  <div class="kpi" onclick="highlightKpi(this,'clv')" title="Click to highlight">
+    <div class="kpi-label">Avg CLV</div>
+    <div class="kpi-val" id="kClv">$3,240</div>
+    <div class="kpi-delta" id="dClv">↑ +18.7% YoY</div>
+  </div>
+  <div class="kpi" onclick="highlightKpi(this,'retention')" title="Click to highlight">
+    <div class="kpi-label">12-Mo Retention</div>
+    <div class="kpi-val" id="kRet">61%</div>
+    <div class="kpi-delta" id="dRet">↑ +5pp vs prior year</div>
+  </div>
+  <div class="kpi" onclick="highlightKpi(this,'premium')" title="Click to highlight">
+    <div class="kpi-label">Rev Premium (High-Ret)</div>
+    <div class="kpi-val" id="kPremium">+27%</div>
+    <div class="kpi-delta" id="dPremium">vs low-retention cohorts</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('matrix',this)">Cohort Matrix</div>
+  <div class="tab" onclick="switchTab('revenue',this)">Revenue Trends</div>
+  <div class="tab" onclick="switchTab('segments',this)">Customer Segments</div>
+  <div class="tab" onclick="switchTab('simulator',this)">CLV Simulator</div>
+</div>
+
+<!-- TAB: MATRIX -->
+<div class="tab-content active" id="tab-matrix">
+  <div class="panel">
+    <div class="sec-title">Retention Matrix — click a row to drill down</div>
+    <div style="overflow-x:auto">
+    <table class="cohort-table">
+      <thead>
+        <tr>
+          <th class="ct-label">Cohort</th>
+          <th onclick="sortMatrix('m',0)">M0</th><th onclick="sortMatrix('m',1)">M1</th>
+          <th onclick="sortMatrix('m',2)">M2</th><th onclick="sortMatrix('m',3)">M3</th>
+          <th onclick="sortMatrix('m',4)">M4</th><th onclick="sortMatrix('m',5)">M5</th>
+          <th onclick="sortMatrix('m',6)">M6</th><th onclick="sortMatrix('m',7)">M7</th>
+          <th onclick="sortMatrix('m',8)">M8</th><th onclick="sortMatrix('m',9)">M9</th>
+          <th onclick="sortMatrix('m',10)">M10</th><th onclick="sortMatrix('m',11)">M11</th>
+          <th onclick="sortMatrix('m',12)">M12</th>
+        </tr>
+      </thead>
+      <tbody id="matrixBody"></tbody>
+    </table>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:.6rem">
+      <span style="font-size:10px;color:var(--color-text-secondary)">Low</span>
+      <div style="flex:1;height:7px;border-radius:2px;background:linear-gradient(to right,#D85A30,#EF9F27,#9FE1CB,#1D9E75)"></div>
+      <span style="font-size:10px;color:var(--color-text-secondary)">High</span>
+      <span style="font-size:10px;color:var(--color-text-tertiary);margin-left:8px">Click column header to sort · Click row to drill down</span>
+    </div>
+    <div class="detail-box" id="cohortDetail" style="display:none">
+      <div class="detail-title" id="cohortDetailTitle"></div>
+      <div id="cohortDetailBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: REVENUE -->
+<div class="tab-content" id="tab-revenue">
+  <div class="panel">
+    <div class="sec-title">Cumulative Revenue by Cohort (USD thousands)</div>
+    <div class="toggle-row" id="cohortToggles"></div>
+    <div style="position:relative;height:240px"><canvas id="revChart" role="img" aria-label="Cumulative revenue by cohort, Jan through Dec 2024">Cumulative revenue shown per cohort over 12 months.</canvas></div>
+  </div>
+  <div class="panel">
+    <div class="sec-title">Month-over-Month Retention Decay</div>
+    <div style="position:relative;height:200px"><canvas id="retChart" role="img" aria-label="Retention rate decay curve comparing high, mid, and low retention cohorts">Retention decays from 100% at M0 and stabilizes for high-retention cohorts around 55-65%.</canvas></div>
+  </div>
+</div>
+
+<!-- TAB: SEGMENTS -->
+<div class="tab-content" id="tab-segments">
+  <div class="two-col">
+    <div class="panel">
+      <div class="sec-title">Customer Segments — click to explore</div>
+      <div class="seg-grid" id="segGrid"></div>
+    </div>
+    <div class="panel">
+      <div class="sec-title">CLV Comparison by Segment</div>
+      <div id="clvBars"></div>
+      <div class="detail-box" id="segDetail" style="display:none">
+        <div class="detail-title" id="segDetailTitle"></div>
+        <div id="segDetailBody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: SIMULATOR -->
+<div class="tab-content" id="tab-simulator">
+  <div class="panel">
+    <div class="sec-title">CLV Simulator — adjust parameters to model scenarios</div>
+    <div class="slider-row">
+      <label>Avg Order Value ($)</label>
+      <input type="range" id="sAov" min="50" max="500" value="180" step="5" oninput="runSimulator()">
+      <span id="oAov">$180</span>
+    </div>
+    <div class="slider-row">
+      <label>Purchase Frequency (yr)</label>
+      <input type="range" id="sFreq" min="1" max="24" value="6" step="1" oninput="runSimulator()">
+      <span id="oFreq">6x</span>
+    </div>
+    <div class="slider-row">
+      <label>Retention Rate (%)</label>
+      <input type="range" id="sRet" min="10" max="95" value="61" step="1" oninput="runSimulator()">
+      <span id="oRet">61%</span>
+    </div>
+    <div class="slider-row">
+      <label>Discount Rate (%)</label>
+      <input type="range" id="sDisc" min="5" max="30" value="10" step="1" oninput="runSimulator()">
+      <span id="oDisc">10%</span>
+    </div>
+    <div class="slider-row">
+      <label>Gross Margin (%)</label>
+      <input type="range" id="sMargin" min="10" max="80" value="40" step="1" oninput="runSimulator()">
+      <span id="oMargin">40%</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:1rem">
+      <div class="kpi"><div class="kpi-label">Projected CLV</div><div class="kpi-val" id="simClv" style="color:#00C9A7">-</div></div>
+      <div class="kpi"><div class="kpi-label">Annual Revenue/Customer</div><div class="kpi-val" id="simAnnual">-</div></div>
+      <div class="kpi"><div class="kpi-label">Avg Customer Lifespan</div><div class="kpi-val" id="simLife">-</div></div>
+    </div>
+    <div style="position:relative;height:200px;margin-top:1rem"><canvas id="simChart" role="img" aria-label="CLV projection chart over customer lifespan">Projected CLV growth over customer lifespan based on slider inputs.</canvas></div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const allCohorts=[
+  {label:'Jan 2024',q:'q1',vals:[100,78,68,61,57,55,53,51,50,49,48,47,46],rev:[210,390,540,670,780,870,940,1010,1070,1120,1165,1210],color:'#00C9A7'},
+  {label:'Feb 2024',q:'q1',vals:[100,75,65,58,54,52,50,48,47,46,45,44,null],rev:[195,360,500,620,720,800,860,920,970,1010,1050,null],color:'#1D9E75'},
+  {label:'Mar 2024',q:'q1',vals:[100,72,62,55,51,49,47,46,45,44,43,null,null],rev:[180,335,465,575,670,745,800,850,895,935,null,null],color:'#5DCAA5'},
+  {label:'Apr 2024',q:'q2',vals:[100,69,59,52,48,46,44,43,42,41,null,null,null],rev:[165,305,420,520,600,668,720,765,805,null,null,null],color:'#9FE1CB'},
+  {label:'May 2024',q:'q2',vals:[100,66,56,49,45,43,41,40,39,null,null,null,null],rev:[155,285,390,480,555,615,662,700,null,null,null,null],color:'#F5A623'},
+  {label:'Jun 2024',q:'q2',vals:[100,63,53,46,42,40,38,37,null,null,null,null,null],rev:[145,265,360,445,510,565,608,null,null,null,null,null],color:'#EF9F27'},
+  {label:'Jul 2024',q:'q3',vals:[100,64,54,47,43,41,39,null,null,null,null,null,null],rev:[150,275,375,462,532,590,null,null,null,null,null,null],color:'#BA7517'},
+  {label:'Aug 2024',q:'q3',vals:[100,67,57,50,46,44,null,null,null,null,null,null,null],rev:[158,292,400,494,568,null,null,null,null,null,null,null],color:'#D85A30'},
+  {label:'Sep 2024',q:'q3',vals:[100,70,60,53,49,null,null,null,null,null,null,null,null],rev:[165,305,418,514,null,null,null,null,null,null,null,null],color:'#F09595'},
+  {label:'Oct 2024',q:'q4',vals:[100,71,61,54,null,null,null,null,null,null,null,null,null],rev:[168,312,428,null,null,null,null,null,null,null,null,null],color:'#E24B4A'},
+  {label:'Nov 2024',q:'q4',vals:[100,68,58,null,null,null,null,null,null,null,null,null,null],rev:[160,296,null,null,null,null,null,null,null,null,null,null],color:'#A32D2D'},
+  {label:'Dec 2024',q:'q4',vals:[100,65,null,null,null,null,null,null,null,null,null,null,null],rev:[155,null,null,null,null,null,null,null,null,null,null,null],color:'#793232'},
+];
+
+const segments=[
+  {id:'champions',name:'Champions',count:5812,clv:6400,ret:91,color:'#00C9A7',details:{avg_orders:'14.2/yr',avg_spend:'$8,200',top_category:'Premium','since':'Jan 2024',action:'Reward & upsell'}},
+  {id:'loyal',name:'Loyal',count:8340,clv:3800,ret:74,color:'#5DCAA5',details:{avg_orders:'8.6/yr',avg_spend:'$4,500',top_category:'Core','since':'Mar 2024',action:'Cross-sell bundles'}},
+  {id:'at-risk',name:'At Risk',count:6290,clv:1900,ret:42,color:'#EF9F27',details:{avg_orders:'3.1/yr',avg_spend:'$2,200',top_category:'Seasonal','since':'Jul 2024',action:'Win-back campaign'}},
+  {id:'churned',name:'Churned',count:4388,clv:820,ret:11,color:'#D85A30',details:{avg_orders:'1.2/yr',avg_spend:'$950',top_category:'Discount','since':'Oct 2024',action:'Reactivation email'}},
+];
+
+let activeQ='all', activeSeg=null, selectedCohort=null, activeKpi=null;
+let visibleCohorts=new Set(allCohorts.map(c=>c.label));
+let revChartInst=null, retChartInst=null, simChartInst=null;
+
+function getCellColor(v){
+  if(v===null)return'transparent';
+  if(v>=75)return'#1D9E75';
+  if(v>=60)return'#5DCAA5';
+  if(v>=45)return'#9FE1CB';
+  if(v>=30)return'#EF9F27';
+  return'#D85A30';
+}
+function getCellText(v){
+  if(v===null)return'transparent';
+  if(v>=45)return'#04342C';
+  return'#fff';
+}
+
+function getFiltered(){
+  return allCohorts.filter(c=>{
+    if(activeQ!=='all'&&c.q!==activeQ)return false;
+    return true;
+  });
+}
+
+function buildMatrix(){
+  const filtered=getFiltered();
+  const tbody=document.getElementById('matrixBody');
+  tbody.innerHTML='';
+  filtered.forEach((row,ri)=>{
+    const tr=document.createElement('tr');
+    tr.className='cohort-row'+(selectedCohort===row.label?' selected':'');
+    tr.onclick=()=>drillCohort(row,tr);
+    const th=document.createElement('td');
+    th.className='ct-label';th.textContent=row.label;tr.appendChild(th);
+    row.vals.forEach((v,ci)=>{
+      const td=document.createElement('td');
+      td.style.background=getCellColor(v);
+      td.style.color=getCellText(v);
+      td.textContent=v!==null?v+'%':'';
+      td.style.opacity='0';
+      tr.appendChild(td);
+      setTimeout(()=>{td.style.opacity='1';},ri*40+ci*15);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function drillCohort(row,tr){
+  selectedCohort=selectedCohort===row.label?null:row.label;
+  document.querySelectorAll('.cohort-row').forEach(r=>r.classList.remove('selected'));
+  const box=document.getElementById('cohortDetail');
+  if(!selectedCohort){box.style.display='none';return;}
+  tr.classList.add('selected');
+  const lastVal=row.vals.filter(v=>v!==null).pop();
+  const m1=row.vals[1]??'N/A';
+  const m3=row.vals[3]??'N/A';
+  const m6=row.vals[6]??'N/A';
+  const m12=row.vals[12]??'N/A';
+  const lastRev=row.rev.filter(v=>v!==null).pop();
+  document.getElementById('cohortDetailTitle').textContent=row.label+' — Cohort Drill-Down';
+  document.getElementById('cohortDetailBody').innerHTML=`
+    <div class="detail-row"><span class="detail-key">M1 Retention</span><span class="detail-val">${m1!='N/A'?m1+'%':m1}</span></div>
+    <div class="detail-row"><span class="detail-key">M3 Retention</span><span class="detail-val">${m3!='N/A'?m3+'%':m3}</span></div>
+    <div class="detail-row"><span class="detail-key">M6 Retention</span><span class="detail-val">${m6!='N/A'?m6+'%':m6}</span></div>
+    <div class="detail-row"><span class="detail-key">M12 Retention</span><span class="detail-val">${m12!='N/A'?m12+'%':m12}</span></div>
+    <div class="detail-row"><span class="detail-key">Latest Cumulative Rev</span><span class="detail-val">$${lastRev}k</span></div>
+    <div class="detail-row"><span class="detail-key">Cohort Quarter</span><span class="detail-val">${row.q.toUpperCase()}</span></div>
+    <div class="detail-row"><span class="detail-key">Latest Retention</span><span class="detail-val">${lastVal}%</span></div>
+  `;
+  box.style.display='block';
+}
+
+function sortMatrix(type,col){
+  const filtered=getFiltered();
+  filtered.sort((a,b)=>{
+    const va=a.vals[col]??-1,vb=b.vals[col]??-1;
+    return vb-va;
+  });
+  const tbody=document.getElementById('matrixBody');
+  tbody.innerHTML='';
+  filtered.forEach((row,ri)=>{
+    const tr=document.createElement('tr');
+    tr.className='cohort-row';
+    tr.onclick=()=>drillCohort(row,tr);
+    const th=document.createElement('td');
+    th.className='ct-label';th.textContent=row.label;tr.appendChild(th);
+    row.vals.forEach((v,ci)=>{
+      const td=document.createElement('td');
+      td.style.background=getCellColor(v);
+      td.style.color=getCellText(v);
+      td.textContent=v!==null?v+'%':'';
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function buildRevChart(){
+  if(revChartInst)revChartInst.destroy();
+  const filtered=getFiltered().filter(c=>visibleCohorts.has(c.label));
+  const labels=['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'];
+  const datasets=filtered.map(c=>({
+    label:c.label,data:c.rev,borderColor:c.color,borderWidth:2,pointRadius:3,tension:.4,fill:false,
+    borderDash:c.q==='q4'?[4,3]:[],pointBackgroundColor:c.color,
+  }));
+  revChartInst=new Chart(document.getElementById('revChart'),{
+    type:'line',data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: $${ctx.parsed.y}k`}}},
+      scales:{x:{ticks:{font:{size:9},color:'#888'},grid:{display:false}},
+        y:{ticks:{font:{size:9},color:'#888',callback:v=>'$'+v+'k'},grid:{color:'rgba(136,135,128,0.1)'}}}
+    }
+  });
+}
+
+function buildRetChart(){
+  if(retChartInst)retChartInst.destroy();
+  retChartInst=new Chart(document.getElementById('retChart'),{
+    type:'line',
+    data:{labels:['M0','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'],
+      datasets:[
+        {label:'High-Ret (Q1)',data:[100,75,66,59,55,53,51,49,48,47,46,45,44],borderColor:'#00C9A7',borderWidth:2,pointRadius:2,tension:.3,fill:false},
+        {label:'Mid-Ret (Q2)',data:[100,66,55,48,44,42,40,38,37,null,null,null,null],borderColor:'#F5A623',borderWidth:2,pointRadius:2,tension:.3,fill:false},
+        {label:'Low-Ret (Q4)',data:[100,68,57,null,null,null,null,null,null,null,null,null,null],borderColor:'#D85A30',borderWidth:2,borderDash:[4,3],pointRadius:2,tension:.3,fill:false},
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{x:{ticks:{font:{size:9},color:'#888'},grid:{display:false}},
+        y:{ticks:{font:{size:9},color:'#888',callback:v=>v+'%'},grid:{color:'rgba(136,135,128,0.1)'},min:0,max:100}}
+    }
+  });
+}
+
+function buildCohortToggles(){
+  const container=document.getElementById('cohortToggles');
+  container.innerHTML='';
+  allCohorts.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='toggle-btn'+(visibleCohorts.has(c.label)?' on':'');
+    btn.style.borderColor=c.color;
+    btn.textContent=c.label.replace(' 2024','');
+    btn.onclick=()=>{
+      if(visibleCohorts.has(c.label))visibleCohorts.delete(c.label);
+      else visibleCohorts.add(c.label);
+      btn.classList.toggle('on');
+      buildRevChart();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function buildSegments(){
+  const grid=document.getElementById('segGrid');
+  grid.innerHTML='';
+  segments.forEach(seg=>{
+    const card=document.createElement('div');
+    card.className='seg-card'+(activeSeg===seg.id?' active-seg':'');
+    card.style.borderLeftColor=seg.color;
+    card.innerHTML=`<div class="seg-name">${seg.name}</div><div class="seg-val">${seg.count.toLocaleString()}</div><div class="seg-sub">CLV $${seg.clv.toLocaleString()} · Ret ${seg.ret}%</div>`;
+    card.onclick=()=>drillSegment(seg,card);
+    grid.appendChild(card);
+  });
+
+  const bars=document.getElementById('clvBars');
+  bars.innerHTML='';
+  const maxC=6400;
+  segments.forEach(seg=>{
+    const pct=Math.round((seg.clv/maxC)*100);
+    bars.innerHTML+=`<div class="bar-row"><div class="bar-name">${seg.name}</div><div class="bar-track" onclick="drillSegmentById('${seg.id}')"><div class="bar-fill" style="width:${pct}%;background:${seg.color};color:#04342C">$${seg.clv.toLocaleString()}</div></div></div>`;
+  });
+}
+
+function drillSegment(seg,card){
+  activeSeg=activeSeg===seg.id?null:seg.id;
+  document.querySelectorAll('.seg-card').forEach(c=>c.classList.remove('active-seg'));
+  const box=document.getElementById('segDetail');
+  if(!activeSeg){box.style.display='none';return;}
+  card.classList.add('active-seg');
+  document.getElementById('segDetailTitle').textContent=seg.name+' Segment — Detail';
+  document.getElementById('segDetailBody').innerHTML=Object.entries(seg.details).map(([k,v])=>`<div class="detail-row"><span class="detail-key">${k.replace('_',' ')}</span><span class="detail-val">${v}</span></div>`).join('');
+  box.style.display='block';
+}
+
+function drillSegmentById(id){
+  const seg=segments.find(s=>s.id===id);
+  const cards=document.querySelectorAll('.seg-card');
+  let card=null;
+  cards.forEach((c,i)=>{if(segments[i].id===id)card=c;});
+  if(card)drillSegment(seg,card);
+}
+
+function applyFilters(){
+  activeQ=document.getElementById('yearFilter').value;
+  updateKpis();
+  buildMatrix();
+  buildRevChart();
+}
+
+function updateKpis(){
+  const filtered=getFiltered();
+  const avgRet=filtered.reduce((a,c)=>{const v=c.vals.filter(x=>x!==null).pop();return a+(v||0);},0)/filtered.length;
+  const customers={all:24830,q1:7200,q2:6100,q3:6400,q4:5130}[activeQ];
+  const clv={all:3240,q1:4100,q2:3050,q3:2800,q4:2400}[activeQ];
+  document.getElementById('kCustomers').textContent=customers.toLocaleString();
+  document.getElementById('kClv').textContent='$'+clv.toLocaleString();
+  document.getElementById('kRet').textContent=Math.round(avgRet)+'%';
+}
+
+function highlightKpi(el,type){
+  document.querySelectorAll('.kpi').forEach(k=>k.classList.remove('selected'));
+  el.classList.toggle('selected');
+}
+
+function resetAll(){
+  activeQ='all';activeSeg=null;selectedCohort=null;
+  document.getElementById('yearFilter').value='all';
+  document.getElementById('segFilter').value='all';
+  visibleCohorts=new Set(allCohorts.map(c=>c.label));
+  buildMatrix();buildCohortToggles();buildRevChart();buildSegments();updateKpis();
+  document.getElementById('cohortDetail').style.display='none';
+  document.getElementById('segDetail').style.display='none';
+  document.querySelectorAll('.kpi').forEach(k=>k.classList.remove('selected'));
+}
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+  if(id==='revenue'){buildCohortToggles();buildRevChart();buildRetChart();}
+  if(id==='segments')buildSegments();
+  if(id==='simulator')runSimulator();
+}
+
+function runSimulator(){
+  const aov=parseInt(document.getElementById('sAov').value);
+  const freq=parseInt(document.getElementById('sFreq').value);
+  const ret=parseInt(document.getElementById('sRet').value)/100;
+  const disc=parseInt(document.getElementById('sDisc').value)/100;
+  const margin=parseInt(document.getElementById('sMargin').value)/100;
+  document.getElementById('oAov').textContent='$'+aov;
+  document.getElementById('oFreq').textContent=freq+'x';
+  document.getElementById('oRet').textContent=Math.round(ret*100)+'%';
+  document.getElementById('oDisc').textContent=Math.round(disc*100)+'%';
+  document.getElementById('oMargin').textContent=Math.round(margin*100)+'%';
+  const lifespan=ret<1?1/(1-ret):20;
+  const annualRev=aov*freq*margin;
+  const clv=annualRev*(ret/(1+disc-ret));
+  document.getElementById('simClv').textContent='$'+Math.round(clv).toLocaleString();
+  document.getElementById('simAnnual').textContent='$'+Math.round(annualRev).toLocaleString();
+  document.getElementById('simLife').textContent=Math.min(lifespan,20).toFixed(1)+' yrs';
+  const years=Array.from({length:6},(_,i)=>i+1);
+  const cumClv=years.map(y=>{
+    let val=0;for(let t=0;t<y;t++)val+=annualRev*Math.pow(ret,t)/Math.pow(1+disc,t);
+    return Math.round(val);
+  });
+  if(simChartInst)simChartInst.destroy();
+  simChartInst=new Chart(document.getElementById('simChart'),{
+    type:'bar',
+    data:{labels:years.map(y=>'Year '+y),datasets:[{label:'Cumulative CLV',data:cumClv,backgroundColor:'#00C9A7',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'CLV: $'+ctx.parsed.y.toLocaleString()}}},
+      scales:{x:{ticks:{font:{size:9},color:'#888'},grid:{display:false}},
+        y:{ticks:{font:{size:9},color:'#888',callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(136,135,128,0.1)'}}}
+    }
+  });
+}
+
+buildMatrix();
+</script>
